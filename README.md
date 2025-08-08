@@ -2,6 +2,10 @@
 
 > **Warning**: This project may cause temporary blindness, uncontrollable laughter, and an inexplicable urge to throw grenades at your dark mode. Use responsibly.
 
+## Live Demo
+
+Test it [here](https://flashbang-theme-toggle.vercel.app/)
+
 ## What the f*ck is this?
 
 Ever wanted to switch from dark mode to light mode with the subtlety of a tactical flashbang grenade? Well, congratulations, you've found your new favorite useless tool.
