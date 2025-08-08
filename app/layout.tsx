@@ -15,12 +15,12 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Flashbang Theme Toggle",
   description:
-    "Um theme-toggle bem humorado que te dá uma 'flashada' sonora ao sair do modo noturno.",
+    "A playful theme switcher that plays a flashbang sound when leaving the dark mode.",
   metadataBase: new URL("https://flashbang-theme-toggle.local"),
   openGraph: {
     title: "Flashbang Theme Toggle",
     description:
-      "Um theme-toggle bem humorado que te dá uma 'flashada' sonora ao sair do modo noturno.",
+      "A playful theme switcher that plays a flashbang sound when leaving the dark mode.",
     type: "website",
   },
 };
@@ -31,7 +31,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className="dark" suppressHydrationWarning>
+    <html lang="en" className="dark" suppressHydrationWarning>
       <head>
         {/* Persist theme ASAP to avoid wrong initial paint */}
         <script
