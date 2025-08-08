@@ -1,6 +1,6 @@
 # 💥 Flashbang Theme Toggle
 
-> **Warning**: This project may cause temporary blindness, uncontrollable laughter, and an inexplicable urge to throw grenades at your dark mode. Use responsibly.
+> **Warning**: This project may cause your website to look cool as f*ck. Use responsibly.
 
 ## Live Demo
 
