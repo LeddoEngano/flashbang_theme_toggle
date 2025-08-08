@@ -2,24 +2,17 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { FaXTwitter, FaInstagram } from "react-icons/fa6";
+import { FaXTwitter, FaInstagram, FaMoon } from "react-icons/fa6";
 
-// Small helper to compose class names safely
 function cx(...classes: Array<string | false | null | undefined>): string {
   return classes.filter(Boolean).join(" ");
 }
 
-// Flash timings (keep in sync with CSS arbitrary duration)
-const FLASH_HOLD_MS = 1000; // keep screen fully white a bit longer
-const FLASH_FADE_MS = 3500; // matches `duration-[3500ms]` class below
+const FLASH_HOLD_MS = 1000;
+const FLASH_FADE_MS = 3500;
 const FLASH_TOTAL_MS = FLASH_HOLD_MS + FLASH_FADE_MS;
 
-/**
- * Preloads the flashbang audio and returns a play() function.
- * Resets currentTime for rapid consecutive plays after user gesture.
- */
 function useFlashbangAudio() {
-  // Preload audio for immediate playback with user gesture
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -37,21 +30,16 @@ function useFlashbangAudio() {
       audioRef.current.currentTime = 0;
       await audioRef.current.play();
     } catch {
-      // Ignore autoplay issues
     }
   }, []);
 
   return play;
 }
 
-/**
- * Manages theme using `.dark` on <html> with localStorage persistence.
- */
 function useTheme() {
   const [isDark, setIsDark] = useState<boolean>(false);
 
   useEffect(() => {
-    // sync on mount
     const root = document.documentElement;
     const persisted = localStorage.getItem("flashbang-theme");
     const dark = persisted ? persisted === "dark" : root.classList.contains("dark");
@@ -75,28 +63,20 @@ type FlashbangToggleProps = {
   onFlash?: () => void;
 };
 
-/**
- * Theme toggle button that plays a flash gag when switching dark -> light.
- */
 function FlashbangToggle({ onFlash }: FlashbangToggleProps) {
   const { isDark, setTheme } = useTheme();
   const play = useFlashbangAudio();
   const [isFlashing, setIsFlashing] = useState(false);
 
   const handleClick = useCallback(() => {
-    // Prevent multiple clicks during flash sequence
     if (isFlashing) return;
 
-    // When going from dark -> light, play flashbang sound
     if (isDark) {
       setIsFlashing(true);
       play();
-      // trigger visual flash overlay
       onFlash?.();
-      // tiny delay for comedic timing
       setTimeout(() => {
         setTheme(false);
-        // Re-enable button after theme change + flash animation
         setTimeout(() => setIsFlashing(false), FLASH_TOTAL_MS);
       }, 50);
     } else {
@@ -110,44 +90,44 @@ function FlashbangToggle({ onFlash }: FlashbangToggleProps) {
       onClick={handleClick}
       disabled={isFlashing}
       aria-pressed={!isDark}
-      aria-label="Alternar tema"
-      title={isDark ? "Flash! (vai para light)" : "Apagar as luzes (vai para dark)"}
+      aria-label="Toggle theme"
+      title={isDark ? "Flash! (switch to light)" : "Lights out (switch to dark)"}
       className={cx(
-        "group inline-grid place-items-center size-16 md:size-20 rounded-full backdrop-blur shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5 active:translate-y-0 focus:outline-none focus-visible:ring-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0",
+        "group inline-grid cursor-pointer place-items-center size-16 md:size-20 rounded-full backdrop-blur shadow-sm hover:shadow-md transition-all hover:-translate-y-0.5 active:translate-y-0 focus:outline-none focus-visible:ring-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0",
         isDark
           ? "bg-white border border-zinc-200 text-zinc-900 hover:bg-zinc-50 focus-visible:ring-emerald-500"
           : "bg-zinc-900 border border-zinc-800 text-zinc-50 hover:bg-zinc-800 focus-visible:ring-emerald-400"
       )}
     >
-      <Image
-        src="/svgs/flashbang-icon.svg"
-        width={48}
-        height={48}
-        alt="Flashbang icon"
-        className={cx(
-          "transition-transform group-active:scale-95 drop-shadow-sm",
-          isDark ? "invert-0" : "invert"
-        )}
-        priority
-      />
+      {isDark ? (
+        <Image
+          src="/svgs/flashbang-icon.svg"
+          width={48}
+          height={48}
+          alt="Flashbang icon"
+          className="transition-transform group-active:scale-95 drop-shadow-sm invert-0"
+          priority
+        />
+      ) : (
+        <FaMoon
+          className="h-7 w-7 transition-transform group-active:scale-95 drop-shadow-sm"
+          aria-hidden
+        />
+      )}
     </button>
   );
 }
 
 export default function Home() {
-  // Controls visual white-out overlay when switching dark -> light
   const [showFlash, setShowFlash] = useState(false);
   const [isFading, setIsFading] = useState(false);
   const { isDark } = useTheme();
 
   const triggerFlash = useCallback(() => {
-    // Show overlay at full opacity, hold briefly, then transition to 0
     setShowFlash(true);
     setIsFading(false);
-    // Use double rAF to ensure browser applies initial styles before transition
     requestAnimationFrame(() => {
       requestAnimationFrame(() => {
-        // Hold the white screen fully opaque before starting fade-out
         setTimeout(() => setIsFading(true), FLASH_HOLD_MS);
       });
     });
@@ -155,21 +135,17 @@ export default function Home() {
 
   return (
     <main className="relative min-h-screen w-full flex flex-col px-6 overflow-hidden pt-12 md:pt-16">
-      {/* Background now comes from body via CSS variables; overlays removed for proper theme contrast */}
 
-      {/* Top notch containing the title */}
       <div
         className={cx(
-          "absolute top-4 left-1/2 -translate-x-1/2 -translate-y-1/2",
+          "absolute top-8 left-1/2 -translate-x-1/2 -translate-y-1/2",
           "w-[min(90vw,28rem)] rounded-b-[28px] bg-[color:var(--background)]",
           "border-x border-b border-[color:var(--border-subtle)]",
           "shadow-[0_8px_20px_rgba(0,0,0,0.06)]"
         )}
       >
-        <div className="px-4 pt-5 pb-4">
-          <div className="flex items-center justify-center gap-3 text-[color:var(--text-strong)]">
-            <h1 className="text-xl md:text-2xl font-semibold tracking-tight">Flashbang Theme Toggle</h1>
-          </div>
+        <div className="h-18 px-4 flex items-center justify-center">
+          <h1 className="text-[color:var(--text-strong)] text-xl md:text-2xl font-semibold tracking-tight leading-none">Flashbang Theme Toggle</h1>
         </div>
       </div>
 
@@ -188,7 +164,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Footer: only the notch rising from the very bottom, containing the content */}
       <footer className="relative w-full pb-24">
         <div
           className={cx(
@@ -219,7 +194,7 @@ export default function Home() {
                     "inline-flex items-center justify-center size-8 rounded-full transition-colors border",
                     "border-[color:var(--border-subtle)] text-[color:var(--text)] hover:bg-[color:var(--hover-surface)]"
                   )}
-                  aria-label="Perfil no X (Twitter) de @leddo_401"
+                  aria-label="X (Twitter) profile of @leddo_401"
                 >
                   <FaXTwitter className="h-4 w-4" aria-hidden />
                 </a>
@@ -231,7 +206,7 @@ export default function Home() {
                     "inline-flex items-center justify-center size-8 rounded-full transition-colors border",
                     "border-[color:var(--border-subtle)] text-[color:var(--text)] hover:bg-[color:var(--hover-surface)]"
                   )}
-                  aria-label="Perfil no Instagram de @leddo_"
+                  aria-label="Instagram profile of @leddo_"
                 >
                   <FaInstagram className="h-4 w-4" aria-hidden />
                 </a>
