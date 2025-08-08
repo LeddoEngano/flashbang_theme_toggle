@@ -1,8 +1,26 @@
 @import "tailwindcss";
 
+/* Force Tailwind dark: variant to use the `.dark` class instead of OS media */
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #ffffff;
-  --foreground: #0f172a;
+  /* Apple-like light palette: softer, airy, high readability */
+  --text-strong: #0f172a;
+  /* slightly softened deep */
+  --text: #334155;
+  /* slate-700 */
+  --text-muted: #64748b;
+  /* slate-500 */
+
+  /* UI tokens */
+  --border-subtle: #e4e4e7;
+  /* zinc-200 */
+  --hover-surface: #f1f5f9;
+  /* slate-100 */
+
+  /* Keep foreground mapped for legacy usage */
+  --foreground: var(--text);
 }
 
 /* Tailwind v4 inline theme vars */
@@ -15,8 +33,23 @@
 
 /* Manual dark mode via .dark class, overrides OS preference */
 .dark {
-  --background: #0a0a0a;
-  --foreground: #ededed;
+  --background: #0b0b0c;
+  /* near-black but not dead black */
+  /* Apple-like dark palette: gentle contrast, no harsh whites */
+  --text-strong: #f5f5f7;
+  /* neutral white */
+  --text: #e5e7eb;
+  /* gray-200 */
+  --text-muted: #a1a1aa;
+  /* zinc-400 */
+
+  /* UI tokens */
+  --border-subtle: #3f3f46;
+  /* zinc-700 */
+  --hover-surface: #27272a;
+  /* zinc-800 */
+
+  --foreground: var(--text);
 }
 
 html,
@@ -26,11 +59,11 @@ body {
 
 body {
   background-color: var(--background);
-  color: var(--foreground);
+  color: var(--text);
   font-family: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
   transition: background-color 250ms ease, color 250ms ease;
 }
 
 ::selection {
-  background-color: color-mix(in oklab, var(--foreground) 20%, transparent);
+  background-color: color-mix(in oklab, var(--text-strong) 20%, transparent);
 }

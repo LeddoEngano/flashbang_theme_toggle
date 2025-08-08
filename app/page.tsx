@@ -138,6 +138,7 @@ export default function Home() {
   // Controls visual white-out overlay when switching dark -> light
   const [showFlash, setShowFlash] = useState(false);
   const [isFading, setIsFading] = useState(false);
+  const { isDark } = useTheme();
 
   const triggerFlash = useCallback(() => {
     // Show overlay at full opacity, hold briefly, then transition to 0
@@ -153,81 +154,93 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="relative min-h-screen w-full flex flex-col px-6 overflow-hidden">
+    <main className="relative min-h-screen w-full flex flex-col px-6 overflow-hidden pt-12 md:pt-16">
       {/* Background now comes from body via CSS variables; overlays removed for proper theme contrast */}
 
-      <div className="flex-1 grid place-items-center">
-        <div className="flex flex-col items-center text-center gap-8 md:gap-10 max-w-2xl">
-          <div className="flex items-center gap-3">
-            <Image
-              src="/svgs/flashbang-icon.svg"
-              alt="Flashbang logo"
-              width={42}
-              height={42}
-              priority
-              className="invert dark:invert-0 transition duration-300"
-            />
-            <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">
-              Flashbang Theme Toggle
-            </h1>
+      {/* Top notch containing the title */}
+      <div
+        className={cx(
+          "absolute top-4 left-1/2 -translate-x-1/2 -translate-y-1/2",
+          "w-[min(90vw,28rem)] rounded-b-[28px] bg-[color:var(--background)]",
+          "border-x border-b border-[color:var(--border-subtle)]",
+          "shadow-[0_8px_20px_rgba(0,0,0,0.06)]"
+        )}
+      >
+        <div className="px-4 pt-5 pb-4">
+          <div className="flex items-center justify-center gap-3 text-[color:var(--text-strong)]">
+            <h1 className="text-xl md:text-2xl font-semibold tracking-tight">Flashbang Theme Toggle</h1>
           </div>
-
-          <p className="text-balance text-base md:text-lg text-zinc-900 dark:text-zinc-300 leading-relaxed">
-            A playful theme switcher that throws a little sonic "flash" when you leave the dark.
-            Use responsibly, avoid hostages, and don't stare directly at the sun.
-          </p>
-
-          <div className="relative">
-            {/* Pulsing ring for emphasis */}
-            <div aria-hidden className="absolute inset-0 -z-10 grid place-items-center">
-              <span className="block size-24 md:size-28 rounded-full bg-emerald-500/10 dark:bg-emerald-400/10 blur-xl animate-pulse" />
-            </div>
-            <FlashbangToggle onFlash={triggerFlash} />
-          </div>
-          <p className="text-xs text-zinc-900 dark:text-zinc-400">Click the grenade to toggle the theme</p>
         </div>
       </div>
 
-      {/* Footer with author and social links anchored at the bottom */}
-      <footer className="w-full py-6">
-        <div className="mx-auto max-w-2xl flex flex-col items-center">
-          <div className="flex items-center gap-3 text-sm text-zinc-900 dark:text-zinc-300">
-            <Image
-              src="/leddo.webp"
-              alt="Project builder avatar"
-              width={64}
-              height={64}
-              className="rounded-full ring-2 ring-zinc-200 dark:ring-zinc-700"
-            />
-            <span className="text-base">&larr; Leddo built this sh*t.</span>
+      <div className="flex-1 grid place-items-center">
+        <div className="flex flex-col items-center text-center gap-6 md:gap-8 max-w-3xl">
+          <div className="relative">
+            <div aria-hidden className="absolute inset-0 -z-10 grid place-items-center">
+              <span className={cx(
+                "block size-24 md:size-28 rounded-full blur-xl animate-pulse",
+                isDark ? "bg-emerald-400/10" : "bg-emerald-500/10"
+              )} />
+            </div>
+            <FlashbangToggle onFlash={triggerFlash} />
           </div>
+          <p className="text-xs text-[color:var(--text-muted)]">Click the grenade to toggle the theme</p>
+        </div>
+      </div>
 
-          {/* Social links - open in new tab */}
-          <div className="mt-3 flex flex-wrap items-center justify-center gap-3">
-            <a
-              href="https://x.com/leddo_401"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full border border-zinc-200 dark:border-zinc-700 px-3 py-1.5 text-sm text-zinc-900 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-              aria-label="Perfil no X (Twitter) de @leddo_401"
-            >
-              <FaXTwitter className="h-4 w-4 shrink-0" aria-hidden />
-              <span>@leddo_401</span>
-            </a>
-            <a
-              href="https://www.instagram.com/leddo_/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full border border-zinc-200 dark:border-zinc-700 px-3 py-1.5 text-sm text-zinc-900 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-              aria-label="Perfil no Instagram de @leddo_"
-            >
-              <FaInstagram className="h-4 w-4 shrink-0" aria-hidden />
-              <span className="font-medium">Instagram</span>
-              <span>@leddo_</span>
-            </a>
+      {/* Footer: only the notch rising from the very bottom, containing the content */}
+      <footer className="relative w-full pb-24">
+        <div
+          className={cx(
+            "absolute bottom-2 left-1/2 -translate-x-1/2 translate-y-1/2",
+            "w-[min(90vw,28rem)] rounded-t-[28px] bg-[color:var(--background)]",
+            "border-x border-t border-[color:var(--border-subtle)]",
+            "shadow-[0_-8px_20px_rgba(0,0,0,0.06)]"
+          )}
+        >
+          <div className="px-4 pt-4 pb-17">
+            <div className="flex items-center justify-between gap-4 text-sm text-[color:var(--text)]">
+              <div className="flex items-center gap-3">
+                <Image
+                  src="/leddo.webp"
+                  alt="Project builder avatar"
+                  width={48}
+                  height={48}
+                  className={cx("rounded-full ring-2 ring-[color:var(--border-subtle)]")}
+                />
+                <span className="text-sm sm:text-base">&larr; Leddo built this sh*t.</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <a
+                  href="https://x.com/leddo_401"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={cx(
+                    "inline-flex items-center justify-center size-8 rounded-full transition-colors border",
+                    "border-[color:var(--border-subtle)] text-[color:var(--text)] hover:bg-[color:var(--hover-surface)]"
+                  )}
+                  aria-label="Perfil no X (Twitter) de @leddo_401"
+                >
+                  <FaXTwitter className="h-4 w-4" aria-hidden />
+                </a>
+                <a
+                  href="https://www.instagram.com/leddo_/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={cx(
+                    "inline-flex items-center justify-center size-8 rounded-full transition-colors border",
+                    "border-[color:var(--border-subtle)] text-[color:var(--text)] hover:bg-[color:var(--hover-surface)]"
+                  )}
+                  aria-label="Perfil no Instagram de @leddo_"
+                >
+                  <FaInstagram className="h-4 w-4" aria-hidden />
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </footer>
+
       {showFlash && (
         <div
           aria-hidden
